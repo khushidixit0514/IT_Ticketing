@@ -5,13 +5,14 @@ const session = require('express-session')
 const config=require("./config")
 const dotenv = require("dotenv").config()
 
+app.use(express.json())
 const asyncHandler = require("express-async-handler")
 
 const router = express.Router()
 // const hbs = require("hbs")
-// const {LogInCollection,Location,ComplaintType,Department,Log,CallStatus} = require("./mongodb")
+const {LogInCollection,Location,ComplaintType,Department,Log,CallStatus} = require("./mongodb")
 const port = process.env.PORT || 3000
-app.use(express.json())
+
 app.use(session({secret:config.sessionSecret}))
 app.use(express.urlencoded({ extended: false }))
 
@@ -23,6 +24,24 @@ console.log(publicPath);
 app.set('view engine', 'hbs')
 app.set('views', tempelatePath)
 app.use(express.static(publicPath))
+const {
+    registerUser, 
+    loginUser, 
+    currenUser,Locationn,register
+  } = require("./userController")
+  
+
+  
+
+const routes= require('./routes.js')
+
+app.use("/",routes)
+
+app.listen(port, () => {
+    console.log('port connected');
+})
+
+
 
 
 // hbs.registerPartials(partialPath)
@@ -49,6 +68,23 @@ app.use(express.static(publicPath))
 //     }
 // })
 
+//complaint log api
+// app.post("/registerr",async(req,res)=>{
+// try{   
+// const{id,date,description}=req.body;
+// const log = await Log.create({
+//     id,
+//     date,
+//     description,
+// })
+// if(log){
+//     res.status(201).json({id: log.id, date: log.date,description:log.description})
+// }}
+// catch(e){
+//     res.send(e)
+// }
+
+// })
 
 
 
@@ -62,45 +98,16 @@ app.use(express.static(publicPath))
 
 
 
-// app.use("/api/users", require("./routes"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const {
-        registerUser, 
-        loginUser, 
-        currenUser,Locationn,register
-      } = require("./userController")
-      
 // const validateToken = require("../middleware/validateTokenHandler")
 
-app.use(router.post("/register", registerUser) )
-app.use(router.post("/login", loginUser)) 
-app.use(router.get("/current", currenUser)) 
+// app.use(router.post("/register", registerUser) )
+// app.use(router.post("/login", loginUser)) 
+// app.use(router.get("/current", currenUser)) 
 
-app.use(router.get("/",(req, res) => {
-    res.render('login')
-}
-))
+// app.use(router.get("/",(req, res) => {
+//     res.render('login')
+// }
+// ))
 
 
 // app.use(router.get("/register",register )) 
@@ -108,34 +115,9 @@ app.use(router.get("/",(req, res) => {
 
 
 
-// //api making for Location
 
-// app.get("/location",async(req,res)=>{
 
-//     try{
-// const getLocation= await Location.find({}) ;
-// res.status(201).send(getLocation)
-// console.log(getLocation)
-//     }catch(e){
-// res.status(500).send(e);
-//     }
-
-// })
-
-// // api making for deaprtment
-
-// app.get("/departments",async(req,res)=>{
-
-//     try{
-// const acessDepartment= await Department.find({}) ;
-// res.status(201).send(acessDepartment)
-//     }catch(e){
-// res.status(500).send(e);
-//     }
-
-// })
-
-// //Api for changing password(Json m object banake change krna upper )
+//Api for changing password(Json m object banake change krna upper )
 // app.patch("/changepassword/:id",async(req,res)=>{
 // try{
 // const _id=req.params.id;
@@ -147,6 +129,19 @@ app.use(router.get("/",(req, res) => {
 // catch(e){
 //     res.status(404).send(e);
 // }
+// })
+
+// app.get("/user/:id",async(req,res)=>{
+//     try{ const _id=req.params.id;
+        
+
+//     const changePasss= await LogInCollection.findById(_id)
+//     res.send(changePasss)
+//     }
+//     catch(e){
+//         res.status(404).send(e);
+//     }
+
 // })
 
 // app.post("/complaint",async(req,res)=>{
@@ -323,35 +318,31 @@ app.use(router.get("/",(req, res) => {
     
 // console.log(currenUser)
     
-// try{
-//     const check = await LogInCollection.findOne({ name: req.body.name })
-// LogInCollection.find({'_id':check._id})
-//          .then((x)=>{
-//     res.render("register",{send:x })
-//     console.log(x)
-//     })
+// // try{
+// //     const check = await LogInCollection.findOne({ name: req.body.name })
+// // // LogInCollection.find({'_id':check._id})
+// // //          .then((x)=>{
+// // //     res.render("register",{send:x })
+// // //     console.log(x)
+// // //     })
 
-//     console.log(check._id);
+// //     // console.log(check._id);
 
 
-// }
+// // }
   
-// catch (e) {
+// // catch (e) {
 
-//     res.send("wrong details")
+// //     res.send("wrong details")
     
 
 // }
 
 
 
-// })
+// )
 
 
 
 
 
-
-app.listen(port, () => {
-    console.log('port connected');
-})
